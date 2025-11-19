@@ -1,3 +1,5 @@
+Surest Member Management
+
 Overview
 
 This project is a Spring Boot–based Member Management System that provides secured REST APIs for managing members. It uses PostgreSQL, Spring Data JPA, JWT authentication, role-based access control, caching, pagination, and adheres to a clean Git workflow.
