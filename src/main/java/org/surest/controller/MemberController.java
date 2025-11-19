@@ -24,7 +24,10 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    // GET /members
+    /**
+     * Get a paginated list of members, optionally filtered by first name or last name.
+     * Accessible by USER or ADMIN roles.
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Page<Member> getMembers(
@@ -37,14 +40,21 @@ public class MemberController {
         return memberService.getMembers(page, size, sort, firstName, lastName);
     }
 
-    // GET /members/{id}
+    /**
+     * Get a member by ID.
+     * Throws UserNotFoundException if the member does not exist.
+     * Accessible by USER or ADMIN roles.
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Member getMemberById(@PathVariable UUID id) {
         return memberService.getMemberById(id);
     }
 
-    // POST /members
+    /**
+     * Create a new member.
+     * Accessible only by ADMIN role.
+     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Member> createMember(@Valid @RequestBody MemberDto memberDto) {
@@ -58,7 +68,11 @@ public class MemberController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    // PUT /members/{id}
+    /**
+     * Update an existing member by ID.
+     * Throws UserNotFoundException if the member does not exist.
+     * Accessible only by ADMIN role.
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public Member updateMember(@PathVariable UUID id, @Valid @RequestBody MemberDto memberDto) {
@@ -71,7 +85,11 @@ public class MemberController {
         return memberService.updateMember(id, memberDetails);
     }
 
-    // DELETE /members/{id}
+    /**
+     * Delete a member by ID.
+     * Throws UserNotFoundException if the member does not exist.
+     * Accessible only by ADMIN role.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMember(@PathVariable UUID id) {
