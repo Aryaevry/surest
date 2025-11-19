@@ -1,0 +1,22 @@
+# podman pod definition
+apiVersion: v1
+kind: Pod
+metadata:
+  name: surest-pod
+spec:
+  containers:
+    - name: surest-app
+      image: surest-app:latest
+      ports:
+        - containerPort: 8080
+          hostPort: 8080
+      env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://host.containers.internal:5432/surest"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "postgres"
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: "update"
+  restartPolicy: Always
