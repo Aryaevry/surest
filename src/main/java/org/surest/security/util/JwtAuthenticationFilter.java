@@ -1,4 +1,4 @@
-package org.surest.security;
+package org.surest.security.util;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

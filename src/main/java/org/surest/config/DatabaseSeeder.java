@@ -1,48 +1,54 @@
 package org.surest.config;
 
-import org.surest.entity.Role;
-import org.surest.entity.User;
-import org.surest.repository.RoleRepository;
-import org.surest.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class responsible for triggering database seeding
+ * at application startup.
+ * <p>
+ * This class delegates the actual seeding logic to {@link SeedService}
+ * and logs the progress using SLF4J. It ensures that essential roles
+ * and default users exist in the database when the application starts.
+ */
 @Configuration
 public class DatabaseSeeder {
 
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
+
+    private final SeedService seedService;
+
+    /**
+     * Constructs a DatabaseSeeder with a reference to the {@link SeedService}.
+     *
+     * @param seedService the service that contains the database seeding logic
+     */
+    public DatabaseSeeder(SeedService seedService) {
+        this.seedService = seedService;
+    }
+
+    /**
+     * Returns a {@link CommandLineRunner} bean that executes database seeding
+     * when the Spring Boot application starts.
+     * <p>
+     * This method logs the start and completion of the seeding process, and
+     * catches any exceptions that may occur during seeding to log them as errors.
+     *
+     * @return a CommandLineRunner that triggers seeding via {@link SeedService}
+     */
     @Bean
-    CommandLineRunner seedDatabase(RoleRepository roleRepository, UserRepository userRepository) {
+    public CommandLineRunner seedDatabase() {
         return args -> {
-            // Seed roles
-            if (roleRepository.findByName("ADMIN") == null) {
-                Role adminRole = new Role();
-                adminRole.setName("ADMIN");
-                roleRepository.save(adminRole);
-            }
+            logger.info("Starting database seeding...");
 
-            if (roleRepository.findByName("USER") == null) {
-                Role userRole = new Role();
-                userRole.setName("USER");
-                roleRepository.save(userRole);
-            }
-
-            // Seed users
-            if (userRepository.findAll().isEmpty()) {
-                Role adminRole = roleRepository.findByName("ADMIN");
-                Role userRole = roleRepository.findByName("USER");
-
-                User admin = new User();
-                admin.setUsername("admin");
-                admin.setPasswordHash("{noop}admin123"); // For simplicity
-                admin.setRole(adminRole);
-                userRepository.save(admin);
-
-                User user = new User();
-                user.setUsername("user");
-                user.setPasswordHash("{noop}user123");
-                user.setRole(userRole);
-                userRepository.save(user);
+            try {
+                seedService.seed();
+                logger.info("Database seeding completed successfully.");
+            } catch (Exception e) {
+                logger.error("Error occurred during database seeding", e);
             }
         };
     }

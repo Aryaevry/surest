@@ -8,12 +8,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.surest.controller.auth.AuthController;
 import org.surest.dto.AuthRequest;
 import org.surest.dto.AuthResponse;
 import org.surest.entity.Role;
 import org.surest.entity.User;
 import org.surest.repository.UserRepository;
-import org.surest.security.JwtUtil;
+import org.surest.security.util.JwtUtil;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;

@@ -7,6 +7,7 @@ import org.surest.entity.Member;
 import org.surest.exception.UserNotFoundException;
 import org.surest.repository.MemberRepository;
 import org.springframework.data.domain.*;
+import org.surest.serviceimpl.MemberServiceImpl;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -14,13 +15,13 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class MemberServiceTest {
+class MemberServiceImplTest {
 
     @Mock
     private MemberRepository memberRepository;
 
     @InjectMocks
-    private MemberService memberService;
+    private MemberServiceImpl memberServiceImpl;
 
     private Member member;
 
@@ -42,7 +43,7 @@ class MemberServiceTest {
         Page<Member> page = new PageImpl<>(List.of(member));
         when(memberRepository.findAll(any(Pageable.class))).thenReturn(page);
 
-        Page<Member> result = memberService.getMembers(0, 10, null, null, null);
+        Page<Member> result = memberServiceImpl.getMembers(0, 10, null, null, null);
         assertEquals(1, result.getContent().size());
         verify(memberRepository, times(1)).findAll(any(Pageable.class));
     }
@@ -51,7 +52,7 @@ class MemberServiceTest {
     @Test
     void testGetMemberByIdFound() {
         when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
-        Member result = memberService.getMemberById(member.getId());
+        Member result = memberServiceImpl.getMemberById(member.getId());
         assertEquals("John", result.getFirstName());
     }
 
@@ -61,14 +62,14 @@ class MemberServiceTest {
         UUID id = UUID.randomUUID();
         when(memberRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> memberService.getMemberById(id));
+        assertThrows(UserNotFoundException.class, () -> memberServiceImpl.getMemberById(id));
     }
 
     // Test createMember
     @Test
     void testCreateMember() {
         when(memberRepository.save(member)).thenReturn(member);
-        Member result = memberService.createMember(member);
+        Member result = memberServiceImpl.createMember(member);
         assertEquals("John", result.getFirstName());
     }
 
@@ -85,7 +86,7 @@ class MemberServiceTest {
                 .dateOfBirth(LocalDate.of(1995, 5, 5))
                 .build();
 
-        Member result = memberService.updateMember(member.getId(), updatedDetails);
+        Member result = memberServiceImpl.updateMember(member.getId(), updatedDetails);
         assertEquals("Jane", result.getFirstName());
     }
 
@@ -96,7 +97,7 @@ class MemberServiceTest {
         when(memberRepository.findById(id)).thenReturn(Optional.empty());
         Member updatedDetails = Member.builder().firstName("Jane").build();
 
-        assertThrows(UserNotFoundException.class, () -> memberService.updateMember(id, updatedDetails));
+        assertThrows(UserNotFoundException.class, () -> memberServiceImpl.updateMember(id, updatedDetails));
     }
 
     // Test deleteMember when member exists
@@ -105,7 +106,7 @@ class MemberServiceTest {
         when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
         doNothing().when(memberRepository).delete(member);
 
-        memberService.deleteMember(member.getId());
+        memberServiceImpl.deleteMember(member.getId());
         verify(memberRepository, times(1)).delete(member);
     }
 
@@ -114,6 +115,6 @@ class MemberServiceTest {
     void testDeleteMemberNotFound() {
         UUID id = UUID.randomUUID();
         when(memberRepository.findById(id)).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, () -> memberService.deleteMember(id));
+        assertThrows(UserNotFoundException.class, () -> memberServiceImpl.deleteMember(id));
     }
 }

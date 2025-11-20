@@ -7,19 +7,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.surest.entity.Role;
 import org.surest.entity.User;
 import org.surest.repository.UserRepository;
+import org.surest.serviceimpl.UserDetailsServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CustomUserDetailsServiceTest {
+class UserDetailsServiceImplTest {
 
     private UserRepository userRepository;
-    private CustomUserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        userDetailsService = new CustomUserDetailsService(userRepository);
+        userDetailsService = new UserDetailsServiceImpl(userRepository);
     }
 
     @Test
