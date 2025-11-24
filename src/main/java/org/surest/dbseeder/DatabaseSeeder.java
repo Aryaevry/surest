@@ -1,4 +1,4 @@
-package org.surest.config;
+package org.surest.dbseeder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.surest.controller.surest.MemberController;
 import org.surest.dto.MemberDto;
 import org.surest.entity.Member;
+import org.surest.service.MemberService;
 import org.surest.serviceimpl.MemberServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,16 +31,16 @@ class MemberControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
-    private MemberServiceImpl memberServiceImpl; // constructor-injected mock
+    private MemberService memberService; // constructor-injected mock
     private MemberController memberController;
 
     @BeforeEach
     void setup() {
         // Create mock
-        memberServiceImpl = Mockito.mock(MemberServiceImpl.class);
+        memberService = Mockito.mock(MemberServiceImpl.class);
 
         // Create controller with constructor injection
-        memberController = new MemberController(memberServiceImpl);
+        memberController = new MemberController(memberService);
 
         // Setup ObjectMapper with JavaTimeModule
         objectMapper = new ObjectMapper();
@@ -77,17 +78,17 @@ class MemberControllerTest {
         Member member = createSampleMember();
         Page<Member> page = new PageImpl<>(List.of(member));
 
-        when(memberServiceImpl.getMembers(anyInt(), anyInt(), anyString(), anyString(), anyString()))
+        when(memberService.getMembers(anyInt(), anyInt(), anyString(), anyString(), anyString()))
                 .thenReturn(page);
 
-        mockMvc.perform(get("/members")
+        mockMvc.perform(get("/api/v1/members")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(member.getId().toString()))
                 .andExpect(jsonPath("$.content[0].firstName").value(member.getFirstName()));
 
-        verify(memberServiceImpl, times(1))
+        verify(memberService, times(1))
                 .getMembers(anyInt(), anyInt(), anyString(), anyString(), anyString());
     }
 
@@ -95,14 +96,14 @@ class MemberControllerTest {
     void testGetMemberById() throws Exception {
         Member member = createSampleMember();
 
-        when(memberServiceImpl.getMemberById(any(UUID.class))).thenReturn(member);
+        when(memberService.getMemberById(any(UUID.class))).thenReturn(member);
 
-        mockMvc.perform(get("/members/{id}", member.getId()))
+        mockMvc.perform(get("/api/v1/members/{id}", member.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(member.getId().toString()))
                 .andExpect(jsonPath("$.firstName").value(member.getFirstName()));
 
-        verify(memberServiceImpl, times(1)).getMemberById(member.getId());
+        verify(memberService, times(1)).getMemberById(member.getId());
     }
 
     @Test
@@ -110,16 +111,16 @@ class MemberControllerTest {
         MemberDto dto = createSampleDto();
         Member saved = createSampleMember();
 
-        when(memberServiceImpl.createMember(any(Member.class))).thenReturn(saved);
+        when(memberService.createMember(any(Member.class))).thenReturn(saved);
 
-        mockMvc.perform(post("/members")
+        mockMvc.perform(post("/api/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(saved.getId().toString()))
                 .andExpect(jsonPath("$.firstName").value(saved.getFirstName()));
 
-        verify(memberServiceImpl, times(1)).createMember(any(Member.class));
+        verify(memberService, times(1)).createMember(any(Member.class));
     }
 
     @Test
@@ -127,27 +128,27 @@ class MemberControllerTest {
         MemberDto dto = createSampleDto();
         Member updated = createSampleMember();
 
-        when(memberServiceImpl.updateMember(any(UUID.class), any(Member.class))).thenReturn(updated);
+        when(memberService.updateMember(any(UUID.class), any(Member.class))).thenReturn(updated);
 
-        mockMvc.perform(put("/members/{id}", updated.getId())
+        mockMvc.perform(put("/api/v1/members/{id}", updated.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(updated.getId().toString()))
                 .andExpect(jsonPath("$.firstName").value(updated.getFirstName()));
 
-        verify(memberServiceImpl, times(1)).updateMember(any(UUID.class), any(Member.class));
+        verify(memberService, times(1)).updateMember(any(UUID.class), any(Member.class));
     }
 
     @Test
     void testDeleteMember() throws Exception {
         UUID id = UUID.randomUUID();
 
-        doNothing().when(memberServiceImpl).deleteMember(id);
+        doNothing().when(memberService).deleteMember(id);
 
-        mockMvc.perform(delete("/members/{id}", id))
+        mockMvc.perform(delete("/api/v1/members/{id}", id))
                 .andExpect(status().isNoContent());
 
-        verify(memberServiceImpl, times(1)).deleteMember(id);
+        verify(memberService, times(1)).deleteMember(id);
     }
 }

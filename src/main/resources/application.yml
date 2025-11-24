@@ -5,6 +5,13 @@ spring:
     password: arya123
     driver-class-name: org.postgresql.Driver
 
+    hikari:
+      maximum-pool-size: 20        # Max DB connections
+      minimum-idle: 5              # Minimum idle connections
+      idle-timeout: 30000          # 30 sec
+      max-lifetime: 1800000        # 30 min (recommended < PostgreSQL idle timeout)
+      connection-timeout: 30000    # 30 sec timeout for getting a connection
+      pool-name: SurestPool
 
   jpa:
     hibernate:
@@ -18,7 +25,7 @@ spring:
     init:
       mode: always
   flyway:
-    enabled: false
+    enabled: true
 
 
 

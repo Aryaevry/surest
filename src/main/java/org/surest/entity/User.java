@@ -3,6 +3,7 @@ package org.surest.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -27,5 +28,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    // Optimistic locking version field using timestamp
+    @Version
+    private Instant lastUpdated;
 
 }

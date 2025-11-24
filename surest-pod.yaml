@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: surest-pod
+spec:
+  restartPolicy: Always
+
+  volumes:
+    - name: dbdata
+      hostPath:
+        path: /var/lib/postgresql/data
+        type: DirectoryOrCreate
+
+  containers:
+
+    - name: postgres
+      image: docker.io/library/postgres:16
+      env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "arya123"
+        - name: POSTGRES_DB
+          value: "surest"
+      ports:
+        - containerPort: 5432
+          hostPort: 5432
+      volumeMounts:
+        - name: dbdata
+          mountPath: /var/lib/postgresql/data
+
+    - name: springapp
+      image: surestapp
+      env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgres:5432/surest"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "arya123"
+      ports:
+        - containerPort: 8080
+          hostPort: 8080

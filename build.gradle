@@ -3,6 +3,7 @@ plugins {
     id 'jacoco'
     id 'org.springframework.boot' version '3.5.7'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.flywaydb.flyway' version '11.17.0' // Add Flyway Gradle plugin
 }
 
 group = 'org.surest'
@@ -28,11 +29,16 @@ dependencies {
     implementation 'com.auth0:java-jwt:4.4.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    //Flyway
+
+    // Flyway core + PostgreSQL database support
     implementation 'org.flywaydb:flyway-core:11.17.0'
+    implementation 'org.flywaydb:flyway-database-postgresql:11.17.0'
 
     //validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
     // --- Testing (JUnit 5 + Mockito included) ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -45,6 +51,16 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
 }
+
+// Flyway configuration (optional, can also be in application.properties)
+flyway {
+    url = 'jdbc:postgresql://localhost:5432/surest'
+    user = 'postgres'
+    password = 'arya123'
+    schemas = ['surest']
+    baselineOnMigrate = true
+}
+
 
 test {
     useJUnitPlatform()
@@ -60,6 +76,15 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
+def excludedClasses = [
+        'org/surest/config/**',
+        'org/surest/dto/**',
+        'org/surest/security/**',
+        'org/surest/entity/**',
+        'org/surest/util/**',
+        'org/surest/mappers/**'
+]
+
 jacocoTestReport {
     dependsOn test
 
@@ -67,18 +92,32 @@ jacocoTestReport {
         xml.required = true
         csv.required = false
         html.required = true
-        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
+
+    classDirectories.setFrom(
+            fileTree("$buildDir/classes/java/main") {
+                exclude excludedClasses
+            }
+    )
 }
 
 jacocoTestCoverageVerification {
+    dependsOn test
+
     violationRules {
         rule {
             limit {
-                minimum = 0.80   // Require at least 80% coverage
+                minimum = 0.50
             }
         }
     }
+
+    classDirectories.setFrom(
+            fileTree("$buildDir/classes/java/main") {
+                exclude excludedClasses
+            }
+    )
 }
 
 

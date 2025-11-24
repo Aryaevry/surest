@@ -3,6 +3,7 @@ package org.surest.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +21,10 @@ public class Role {
 
     @Column(nullable = false, unique = true, length = 50)
     private String name;
+
+    // Optimistic locking version field using timestamp
+    @Version
+    private Instant lastUpdated;
 
     // Getters and setters
 

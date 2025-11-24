@@ -3,6 +3,7 @@ package org.surest.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,6 +38,10 @@ public class Member {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    // Optimistic locking version field using timestamp
+    @Version
+    private Instant lastUpdated;
 
 //    @PrePersist → runs before inserting a new record, sets createdAt and updatedAt.
 //

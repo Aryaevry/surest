@@ -1,5 +1,7 @@
 package org.surest.controller.surest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.surest.dto.MemberDto;
 import org.surest.entity.Member;
-import org.surest.serviceimpl.MemberServiceImpl;
+import org.surest.service.MemberService;
 
 import java.util.UUID;
 
@@ -23,21 +25,25 @@ import java.util.UUID;
  * Access is restricted using {@link PreAuthorize} annotations for role-based security.
  */
 @RestController
-@RequestMapping("/members")
+@RequestMapping("/api/v1/members")
 @Validated
+@Tag(
+        name = "Member API",
+        description = "Endpoints for managing members, including creation, update, deletion, and retrieval."
+)
 public class MemberController {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 
-    private final MemberServiceImpl memberServiceImpl;
+    private final MemberService memberService;
 
     /**
-     * Constructs a MemberController with the specified {@link MemberServiceImpl}.
+     * Constructs a MemberController with the specified {@link MemberService}.
      *
-     * @param memberServiceImpl the service that contains business logic for members
+     * @param memberService the service that contains business logic for members
      */
-    public MemberController(MemberServiceImpl memberServiceImpl) {
-        this.memberServiceImpl = memberServiceImpl;
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     /**
@@ -52,6 +58,10 @@ public class MemberController {
      * @param lastName  optional last name filter
      * @return a {@link Page} of {@link Member} matching the criteria
      */
+    @Operation(
+            summary = "Get list of members",
+            description = "Returns paginated and optionally filtered list of members. Accessible by USER and ADMIN."
+    )
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Page<Member> getMembers(
@@ -63,7 +73,7 @@ public class MemberController {
     ) {
         logger.info("Fetching members list: page={}, size={}, sort={}, firstName={}, lastName={}",
                 page, size, sort, firstName, lastName);
-        return memberServiceImpl.getMembers(page, size, sort, firstName, lastName);
+        return memberService.getMembers(page, size, sort, firstName, lastName);
     }
 
     /**
@@ -75,11 +85,15 @@ public class MemberController {
      * @param id the UUID of the member
      * @return the {@link Member} with the specified ID
      */
+    @Operation(
+            summary = "Get member by ID",
+            description = "Retrieves a member using their UUID. Throws an exception if not found."
+    )
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Member getMemberById(@PathVariable UUID id) {
         logger.info("Fetching member with ID: {}", id);
-        return memberServiceImpl.getMemberById(id);
+        return memberService.getMemberById(id);
     }
 
     /**
@@ -90,6 +104,10 @@ public class MemberController {
      * @param memberDto the DTO containing member details
      * @return a {@link ResponseEntity} with the created {@link Member} and HTTP status 201 (Created)
      */
+    @Operation(
+            summary = "Create a new member",
+            description = "Creates a new member. Accessible only to ADMIN users."
+    )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Member> createMember(@Valid @RequestBody MemberDto memberDto) {
@@ -102,7 +120,7 @@ public class MemberController {
                 .email(memberDto.getEmail())
                 .build();
 
-        Member saved = memberServiceImpl.createMember(member);
+        Member saved = memberService.createMember(member);
         logger.info("Member created successfully with ID: {}", saved.getId());
 
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
@@ -118,6 +136,10 @@ public class MemberController {
      * @param memberDto the DTO containing updated member details
      * @return the updated {@link Member}
      */
+    @Operation(
+            summary = "Update an existing member",
+            description = "Updates the details of an existing member by UUID. Only ADMIN users can access this."
+    )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public Member updateMember(@PathVariable UUID id, @Valid @RequestBody MemberDto memberDto) {
@@ -130,7 +152,7 @@ public class MemberController {
                 .email(memberDto.getEmail())
                 .build();
 
-        Member updated = memberServiceImpl.updateMember(id, memberDetails);
+        Member updated = memberService.updateMember(id, memberDetails);
         logger.info("Member updated successfully: {}", updated.getId());
 
         return updated;
@@ -145,11 +167,15 @@ public class MemberController {
      * @param id the UUID of the member to delete
      * @return a {@link ResponseEntity} with no content (HTTP 204) if deletion is successful
      */
+    @Operation(
+            summary = "Delete a member",
+            description = "Deletes a member using their UUID. Only ADMIN users can perform this action."
+    )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMember(@PathVariable UUID id) {
         logger.info("Deleting member with ID: {}", id);
-        memberServiceImpl.deleteMember(id);
+        memberService.deleteMember(id);
         logger.info("Member deleted successfully: {}", id);
         return ResponseEntity.noContent().build();
     }

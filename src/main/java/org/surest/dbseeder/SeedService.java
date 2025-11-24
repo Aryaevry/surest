@@ -1,13 +1,13 @@
-package org.surest.config;
+package org.surest.dbseeder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.surest.entity.Role;
 import org.surest.entity.User;
 import org.surest.repository.RoleRepository;
 import org.surest.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service responsible for seeding initial roles and users into the database.
