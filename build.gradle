@@ -38,7 +38,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     //swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+:wq
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
 
     // --- Testing (JUnit 5 + Mockito included) ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
