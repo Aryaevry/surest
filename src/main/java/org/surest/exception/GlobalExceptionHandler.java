@@ -87,4 +87,22 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * Handles all other uncaught exceptions.
+     * Returns a 409  CONFLICT response with generic message.
+     */
+
+    @ExceptionHandler(DuplicateDataException.class)
+    public ResponseEntity<SurestErrorResponse> handleConflictException(DuplicateDataException ex, HttpServletRequest request) {
+        SurestErrorResponse error = SurestErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message(ex.getMessage())  // Use the exception's message
+                .path(request.getRequestURI())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
 }

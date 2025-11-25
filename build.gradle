@@ -20,9 +20,19 @@ dependencies {
     runtimeOnly 'com.h2database:h2' // for in-memory testing
     implementation 'org.postgresql:postgresql' // replace with your DB
 
+// MapStruct core library for compile-time code generation of mappers
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+
+// MapStruct annotation processor that generates the mapper implementations during compilation
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    // Lombok-MapStruct binding to ensure Lombok-generated methods (getters/setters/builders)
+// are correctly recognized by MapStruct during annotation processing
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -38,8 +48,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     //swagger
-:wq
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
+
+    // Redis support
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // --- Testing (JUnit 5 + Mockito included) ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -50,6 +62,15 @@ dependencies {
 
     // Spring Security Test for @WithMockUser
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // --- Tests ---
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Testcontainers
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
 
 }
 

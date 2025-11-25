@@ -3,8 +3,7 @@ package org.surest.controller.surest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.surest.dto.MemberDto;
+import org.surest.dto.MemberResponseDto;
 import org.surest.entity.Member;
 import org.surest.service.MemberService;
 
@@ -27,13 +27,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/members")
 @Validated
+@Slf4j
 @Tag(
         name = "Member API",
         description = "Endpoints for managing members, including creation, update, deletion, and retrieval."
 )
 public class MemberController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 
     private final MemberService memberService;
 
@@ -71,7 +71,7 @@ public class MemberController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName
     ) {
-        logger.info("Fetching members list: page={}, size={}, sort={}, firstName={}, lastName={}",
+        log.info("Fetching members list: page={}, size={}, sort={}, firstName={}, lastName={}",
                 page, size, sort, firstName, lastName);
         return memberService.getMembers(page, size, sort, firstName, lastName);
     }
@@ -91,9 +91,10 @@ public class MemberController {
     )
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Member getMemberById(@PathVariable UUID id) {
-        logger.info("Fetching member with ID: {}", id);
-        return memberService.getMemberById(id);
+    public ResponseEntity<Member> getMemberById(@PathVariable UUID id) {
+        log.info("Fetching member with ID: {}", id);
+        Member member = memberService.getMemberById(id);
+        return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
     /**
@@ -111,7 +112,7 @@ public class MemberController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Member> createMember(@Valid @RequestBody MemberDto memberDto) {
-        logger.info("Creating new member: {} {}", memberDto.getFirstName(), memberDto.getLastName());
+        log.info("Creating new member: {} {}", memberDto.getFirstName(), memberDto.getLastName());
 
         Member member = Member.builder()
                 .firstName(memberDto.getFirstName())
@@ -121,7 +122,7 @@ public class MemberController {
                 .build();
 
         Member saved = memberService.createMember(member);
-        logger.info("Member created successfully with ID: {}", saved.getId());
+        log.info("Member created successfully with ID: {}", saved.getId());
 
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
@@ -142,8 +143,8 @@ public class MemberController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Member updateMember(@PathVariable UUID id, @Valid @RequestBody MemberDto memberDto) {
-        logger.info("Updating member with ID: {}", id);
+    public ResponseEntity <MemberResponseDto> updateMember(@PathVariable UUID id, @Valid @RequestBody MemberDto memberDto) {
+        log.info("Updating member with ID: {}", id);
 
         Member memberDetails = Member.builder()
                 .firstName(memberDto.getFirstName())
@@ -152,10 +153,10 @@ public class MemberController {
                 .email(memberDto.getEmail())
                 .build();
 
-        Member updated = memberService.updateMember(id, memberDetails);
-        logger.info("Member updated successfully: {}", updated.getId());
+        MemberResponseDto updated = memberService.updateMember(id, memberDetails);
+        log.info("Member updated successfully: {}", updated.id());
 
-        return updated;
+        return new ResponseEntity<>(updated,HttpStatus.OK);
     }
 
     /**
@@ -174,9 +175,9 @@ public class MemberController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMember(@PathVariable UUID id) {
-        logger.info("Deleting member with ID: {}", id);
+        log.info("Deleting member with ID: {}", id);
         memberService.deleteMember(id);
-        logger.info("Member deleted successfully: {}", id);
+        log.info("Member deleted successfully: {}", id);
         return ResponseEntity.noContent().build();
     }
 }

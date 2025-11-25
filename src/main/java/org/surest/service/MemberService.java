@@ -1,5 +1,6 @@
 package org.surest.service;
 
+import org.surest.dto.MemberResponseDto;
 import org.surest.entity.Member;
 import org.springframework.data.domain.Page;
 
@@ -49,7 +50,7 @@ public interface MemberService {
      * @return the updated {@link Member}
      * @throws RuntimeException if the member is not found
      */
-    Member updateMember(UUID id, Member memberDetails);
+    MemberResponseDto updateMember(UUID id, Member memberDetails);
 
     /**
      * Deletes a member by ID.

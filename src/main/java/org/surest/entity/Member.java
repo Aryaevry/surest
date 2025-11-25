@@ -1,5 +1,6 @@
 package org.surest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class Member {
 
     @Id
     @GeneratedValue
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private UUID id;
 
     @Column(name = "first_name", nullable = false, length = 100)
