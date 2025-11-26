@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.surest.dto.MemberDto;
 import org.surest.dto.MemberResponseDto;
 import org.surest.entity.Member;
 import org.surest.service.MemberService;
@@ -111,14 +110,14 @@ public class MemberController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MemberResponseDto> createMember(@Valid @RequestBody MemberDto memberDto) {
-        log.info("Creating new member: {} {}", memberDto.getFirstName(), memberDto.getLastName());
+    public ResponseEntity<MemberResponseDto> createMember(@Valid @RequestBody MemberResponseDto memberDto) {
+        log.info("Creating new member: {} {}", memberDto.firstName(), memberDto.lastName());
 
         Member member = Member.builder()
-                .firstName(memberDto.getFirstName())
-                .lastName(memberDto.getLastName())
-                .dateOfBirth(memberDto.getDateOfBirth())
-                .email(memberDto.getEmail())
+                .firstName(memberDto.firstName())
+                .lastName(memberDto.lastName())
+                .dateOfBirth(memberDto.dateOfBirth())
+                .email(memberDto. email())
                 .build();
 
         MemberResponseDto saved = memberService.createMember(member);
@@ -143,15 +142,10 @@ public class MemberController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity <MemberResponseDto> updateMember(@PathVariable UUID id, @Valid @RequestBody MemberDto memberDto) {
+    public ResponseEntity <MemberResponseDto> updateMember(@PathVariable UUID id, @Valid @RequestBody MemberResponseDto memberDto) {
         log.info("Updating member with ID: {}", id);
 
-        Member memberDetails = Member.builder()
-                .firstName(memberDto.getFirstName())
-                .lastName(memberDto.getLastName())
-                .dateOfBirth(memberDto.getDateOfBirth())
-                .email(memberDto.getEmail())
-                .build();
+        Member memberDetails = getMember(memberDto);
 
         MemberResponseDto updated = memberService.updateMember(id, memberDetails);
         log.info("Member updated successfully: {}", updated.id());
@@ -179,5 +173,15 @@ public class MemberController {
         memberService.deleteMember(id);
         log.info("Member deleted successfully: {}", id);
         return ResponseEntity.noContent().build();
+    }
+
+    private static Member getMember(MemberResponseDto memberDto) {
+        Member memberDetails = Member.builder()
+                .firstName(memberDto.firstName())
+                .lastName(memberDto.lastName())
+                .dateOfBirth(memberDto.dateOfBirth())
+                .email(memberDto.email())
+                .build();
+        return memberDetails;
     }
 }
