@@ -64,7 +64,7 @@ public class MemberController {
     )
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Page<Member> getMembers(
+    public Page<MemberResponseDto> getMembers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort,
@@ -91,9 +91,9 @@ public class MemberController {
     )
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<Member> getMemberById(@PathVariable UUID id) {
+    public ResponseEntity<MemberResponseDto> getMemberById(@PathVariable UUID id) {
         log.info("Fetching member with ID: {}", id);
-        Member member = memberService.getMemberById(id);
+        MemberResponseDto member = memberService.getMemberById(id);
         return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
@@ -111,7 +111,7 @@ public class MemberController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Member> createMember(@Valid @RequestBody MemberDto memberDto) {
+    public ResponseEntity<MemberResponseDto> createMember(@Valid @RequestBody MemberDto memberDto) {
         log.info("Creating new member: {} {}", memberDto.getFirstName(), memberDto.getLastName());
 
         Member member = Member.builder()
@@ -121,8 +121,8 @@ public class MemberController {
                 .email(memberDto.getEmail())
                 .build();
 
-        Member saved = memberService.createMember(member);
-        log.info("Member created successfully with ID: {}", saved.getId());
+        MemberResponseDto saved = memberService.createMember(member);
+        log.info("Member created successfully with ID: {}", saved.id());
 
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }

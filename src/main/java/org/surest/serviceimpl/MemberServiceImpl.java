@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
-    public Page<Member> getMembers(int page, int size, String sort, String firstName, String lastName) {
+    public Page<MemberResponseDto> getMembers(int page, int size, String sort, String firstName, String lastName) {
         logger.info("Fetching members: page={}, size={}, sort={}, firstName={}, lastName={}",
                 page, size, sort, firstName, lastName);
 
@@ -76,7 +76,7 @@ public class MemberServiceImpl implements MemberService {
         }
 
         logger.info("Fetched {} members", result.getNumberOfElements());
-        return result;
+        return memberMapper.toResponse(result);
     }
 
     /**
@@ -84,19 +84,19 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Cacheable(value = "members", key = "#id")
-    public Member getMemberById(UUID id) {
+    public MemberResponseDto getMemberById(UUID id) {
         logger.info("Fetching member by ID: {}", id);
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Member not found with id: " + id));
         logger.info("Member found: {}", member.getId());
-        return member;
+        return memberMapper.toResponse(member);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Member createMember(Member member) {
+    public MemberResponseDto createMember(Member member) {
         // Log the process of creating a new member
         logger.info("Creating new member: {} {}", member.getFirstName(), member.getLastName());
 
@@ -114,9 +114,9 @@ public class MemberServiceImpl implements MemberService {
         }
 
         // If email is unique, save the new member
-        Member saved = memberRepository.save(member);
-        logger.info("Member created successfully with ID: {}", saved.getId());
-        return saved;
+        Member createdMember = memberRepository.save(member);
+        logger.info("Member created successfully with ID: {}", createdMember.getId());
+        return memberMapper.toResponse(createdMember);
     }
 
 
@@ -127,7 +127,7 @@ public class MemberServiceImpl implements MemberService {
     @CachePut(value = "members", key = "#id")
     public MemberResponseDto updateMember(UUID id, Member memberDetails) {
         logger.info("Updating member with ID: {}", id);
-        Member member = getMemberById(id); // will throw UserNotFoundException if not found
+        Member member = memberMapper.toEntity(getMemberById(id)); // will throw UserNotFoundException if not found
         member.setFirstName(memberDetails.getFirstName());
         member.setLastName(memberDetails.getLastName());
         member.setDateOfBirth(memberDetails.getDateOfBirth());
@@ -145,8 +145,8 @@ public class MemberServiceImpl implements MemberService {
     @CacheEvict(value = "members", key = "#id")
     public void deleteMember(UUID id) {
         logger.info("Deleting member with ID: {}", id);
-        Member member = getMemberById(id); // will throw UserNotFoundException if not found
-        memberRepository.delete(member);
+        MemberResponseDto member = getMemberById(id); // will throw UserNotFoundException if not found
+        memberRepository.delete( memberMapper.toEntity(member));
         logger.info("Member deleted successfully: {}", id);
     }
 }

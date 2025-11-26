@@ -23,7 +23,7 @@ public interface MemberService {
      * @param lastName  optional last name filter
      * @return a {@link Page} of {@link Member} objects matching the criteria
      */
-    Page<Member> getMembers(int page, int size, String sort, String firstName, String lastName);
+    Page<MemberResponseDto> getMembers(int page, int size, String sort, String firstName, String lastName);
 
     /**
      * Retrieves a member by its unique ID.
@@ -32,7 +32,7 @@ public interface MemberService {
      * @return the {@link Member} with the given ID
      * @throws RuntimeException if the member is not found
      */
-    Member getMemberById(UUID id);
+    MemberResponseDto getMemberById(UUID id);
 
     /**
      * Creates a new member.
@@ -40,7 +40,7 @@ public interface MemberService {
      * @param member the {@link Member} to create
      * @return the created {@link Member}
      */
-    Member createMember(Member member);
+    MemberResponseDto createMember(Member member);
 
     /**
      * Updates an existing member by ID.
