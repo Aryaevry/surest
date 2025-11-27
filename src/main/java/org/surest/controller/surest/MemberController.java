@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.surest.dto.MemberResponseDto;
+import org.surest.dto.MemberReqResDto;
 import org.surest.entity.Member;
 import org.surest.service.MemberService;
 
@@ -63,7 +63,7 @@ public class MemberController {
     )
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Page<MemberResponseDto> getMembers(
+    public Page<MemberReqResDto> getMembers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sort,
@@ -90,9 +90,9 @@ public class MemberController {
     )
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<MemberResponseDto> getMemberById(@PathVariable UUID id) {
+    public ResponseEntity<MemberReqResDto> getMemberById(@PathVariable UUID id) {
         log.info("Fetching member with ID: {}", id);
-        MemberResponseDto member = memberService.getMemberById(id);
+        MemberReqResDto member = memberService.getMemberById(id);
         return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
@@ -110,7 +110,7 @@ public class MemberController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MemberResponseDto> createMember(@Valid @RequestBody MemberResponseDto memberDto) {
+    public ResponseEntity<MemberReqResDto> createMember(@Valid @RequestBody MemberReqResDto memberDto) {
         log.info("Creating new member: {} {}", memberDto.firstName(), memberDto.lastName());
 
         Member member = Member.builder()
@@ -120,7 +120,7 @@ public class MemberController {
                 .email(memberDto. email())
                 .build();
 
-        MemberResponseDto saved = memberService.createMember(member);
+        MemberReqResDto saved = memberService.createMember(member);
         log.info("Member created successfully with ID: {}", saved.id());
 
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
@@ -142,12 +142,12 @@ public class MemberController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity <MemberResponseDto> updateMember(@PathVariable UUID id, @Valid @RequestBody MemberResponseDto memberDto) {
+    public ResponseEntity <MemberReqResDto> updateMember(@PathVariable UUID id, @Valid @RequestBody MemberReqResDto memberDto) {
         log.info("Updating member with ID: {}", id);
 
         Member memberDetails = getMember(memberDto);
 
-        MemberResponseDto updated = memberService.updateMember(id, memberDetails);
+        MemberReqResDto updated = memberService.updateMember(id, memberDetails);
         log.info("Member updated successfully: {}", updated.id());
 
         return new ResponseEntity<>(updated,HttpStatus.OK);
@@ -175,7 +175,7 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    private static Member getMember(MemberResponseDto memberDto) {
+    private static Member getMember(MemberReqResDto memberDto) {
         Member memberDetails = Member.builder()
                 .firstName(memberDto.firstName())
                 .lastName(memberDto.lastName())

@@ -1,11 +1,11 @@
 -- Roles
-CREATE TABLE role (
+CREATE TABLE IF NOT EXISTS role (
                       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                       name VARCHAR(50) UNIQUE NOT NULL
 );
 
 -- Users
-CREATE TABLE "user_table" (
+CREATE TABLE IF NOT EXISTS "user_table" (
                               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               username VARCHAR(50) UNIQUE NOT NULL,
                               password_hash VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE "user_table" (
 );
 
 -- Members
-CREATE TABLE member (
+CREATE TABLE IF NOT EXISTS member (
                         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                         first_name VARCHAR(100) NOT NULL,
                         last_name VARCHAR(100) NOT NULL,

@@ -1,6 +1,6 @@
 package org.surest.service;
 
-import org.surest.dto.MemberResponseDto;
+import org.surest.dto.MemberReqResDto;
 import org.surest.entity.Member;
 import org.springframework.data.domain.Page;
 
@@ -23,7 +23,7 @@ public interface MemberService {
      * @param lastName  optional last name filter
      * @return a {@link Page} of {@link Member} objects matching the criteria
      */
-    Page<MemberResponseDto> getMembers(int page, int size, String sort, String firstName, String lastName);
+    Page<MemberReqResDto> getMembers(int page, int size, String sort, String firstName, String lastName);
 
     /**
      * Retrieves a member by its unique ID.
@@ -32,7 +32,7 @@ public interface MemberService {
      * @return the {@link Member} with the given ID
      * @throws RuntimeException if the member is not found
      */
-    MemberResponseDto getMemberById(UUID id);
+    MemberReqResDto getMemberById(UUID id);
 
     /**
      * Creates a new member.
@@ -40,7 +40,7 @@ public interface MemberService {
      * @param member the {@link Member} to create
      * @return the created {@link Member}
      */
-    MemberResponseDto createMember(Member member);
+    MemberReqResDto createMember(Member member);
 
     /**
      * Updates an existing member by ID.
@@ -50,7 +50,7 @@ public interface MemberService {
      * @return the updated {@link Member}
      * @throws RuntimeException if the member is not found
      */
-    MemberResponseDto updateMember(UUID id, Member memberDetails);
+    MemberReqResDto updateMember(UUID id, Member memberDetails);
 
     /**
      * Deletes a member by ID.

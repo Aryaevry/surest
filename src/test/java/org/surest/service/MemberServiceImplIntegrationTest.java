@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
-import org.surest.dto.MemberResponseDto;
+import org.surest.dto.MemberReqResDto;
 import org.surest.entity.Member;
 import org.surest.exception.DuplicateDataException;
 import org.surest.exception.UserNotFoundException;
@@ -56,7 +56,7 @@ public class MemberServiceImplIntegrationTest extends AbstractIntegrationTest {
     void testGetMembers() {
         // Create a page request with pagination and sorting
         Pageable pageable = PageRequest.of(0, 10, Sort.by("firstName"));
-        Page<MemberResponseDto> result = memberService.getMembers(0, 10, "firstName,asc", null, null);
+        Page<MemberReqResDto> result = memberService.getMembers(0, 10, "firstName,asc", null, null);
 
         assertEquals(1, result.getTotalElements());
         assertEquals("John", result.getContent().get(0).firstName());
@@ -65,7 +65,7 @@ public class MemberServiceImplIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testGetMemberById() {
         // Fetch member by ID and assert the result
-        MemberResponseDto result = memberService.getMemberById(member.getId());
+        MemberReqResDto result = memberService.getMemberById(member.getId());
         assertEquals("John", result.firstName());
         assertEquals("Doe", result.lastName());
     }
@@ -85,7 +85,7 @@ public class MemberServiceImplIntegrationTest extends AbstractIntegrationTest {
         newMember.setEmail("jane@example.com");
         newMember.setDateOfBirth(LocalDate.of(1995, 5, 5));
 
-        MemberResponseDto savedMember = memberService.createMember(newMember);
+        MemberReqResDto savedMember = memberService.createMember(newMember);
 
         assertNotNull(savedMember.id());
         assertEquals("Jane", savedMember.firstName());
@@ -114,7 +114,7 @@ public class MemberServiceImplIntegrationTest extends AbstractIntegrationTest {
         member.setLastName("UpdatedDoe");
         member.setEmail("updated@example.com");
 
-        MemberResponseDto updatedMember = memberService.updateMember(member.getId(), member);
+        MemberReqResDto updatedMember = memberService.updateMember(member.getId(), member);
 
         assertEquals("UpdatedJohn", updatedMember.firstName());
         assertEquals("UpdatedDoe", updatedMember.lastName());

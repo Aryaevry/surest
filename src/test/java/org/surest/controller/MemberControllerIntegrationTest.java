@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.surest.dto.MemberDto;
+import org.surest.dto.MemberReqResDto;
 import org.surest.entity.Member;
 import org.surest.integration.AbstractIntegrationTest;
 import org.surest.repository.MemberRepository;
@@ -66,11 +66,16 @@ class MemberControllerIntegrationTest  extends AbstractIntegrationTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void testCreateMember() throws Exception {
-        MemberDto dto = new MemberDto();
-        dto.setFirstName("Alice");
-        dto.setLastName("Smith");
-        dto.setEmail("alice@example.com");
-        dto.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        MemberReqResDto dto = new MemberReqResDto(
+                null,                     // id
+                "Alice",                  // firstName
+                "Smith",                  // lastName
+                LocalDate.of(1990, 1, 1), // dateOfBirth
+                "alice@example.com",      // email
+                null,                     // createdAt
+                null,                     // updatedAt
+                null                      // lastUpdated
+        );
 
         mockMvc.perform(post("/api/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,17 +87,22 @@ class MemberControllerIntegrationTest  extends AbstractIntegrationTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void testUpdateMember() throws Exception {
-        MemberDto dto = new MemberDto();
-        dto.setFirstName("Updated");
-        dto.setLastName("Doe");
-        dto.setEmail("updated@example.com");
-        dto.setDateOfBirth(LocalDate.of(1992, 8, 8));
+        MemberReqResDto dto = new MemberReqResDto(
+                null,                     // id
+                "Alice",                  // firstName
+                "Smith",                  // lastName
+                LocalDate.of(1990, 1, 1), // dateOfBirth
+                "alice@example.com",      // email
+                null,                     // createdAt
+                null,                     // updatedAt
+                null                      // lastUpdated
+        );
 
         mockMvc.perform(put("/api/v1/members/" + savedMember.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Updated"));
+                .andExpect(jsonPath("$.firstName").value("Alice"));
     }
 
     @Test

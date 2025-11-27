@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.surest.dto.MemberResponseDto;
+import org.surest.dto.MemberReqResDto;
 import org.surest.entity.Member;
 import org.surest.exception.DuplicateDataException;
 import org.surest.exception.UserNotFoundException;
@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
-    public Page<MemberResponseDto> getMembers(int page, int size, String sort, String firstName, String lastName) {
+    public Page<MemberReqResDto> getMembers(int page, int size, String sort, String firstName, String lastName) {
         logger.info("Fetching members: page={}, size={}, sort={}, firstName={}, lastName={}",
                 page, size, sort, firstName, lastName);
 
@@ -84,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Cacheable(value = "members", key = "#id")
-    public MemberResponseDto getMemberById(UUID id) {
+    public MemberReqResDto getMemberById(UUID id) {
         logger.info("Fetching member by ID: {}", id);
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Member not found with id: " + id));
@@ -96,7 +96,7 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
-    public MemberResponseDto createMember(Member member) {
+    public MemberReqResDto createMember(Member member) {
         // Log the process of creating a new member
         logger.info("Creating new member: {} {}", member.getFirstName(), member.getLastName());
 
@@ -125,7 +125,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @CachePut(value = "members", key = "#id")
-    public MemberResponseDto updateMember(UUID id, Member memberDetails) {
+    public MemberReqResDto updateMember(UUID id, Member memberDetails) {
         logger.info("Updating member with ID: {}", id);
         Member member = memberMapper.toEntity(getMemberById(id)); // will throw UserNotFoundException if not found
         member.setFirstName(memberDetails.getFirstName());
@@ -145,7 +145,7 @@ public class MemberServiceImpl implements MemberService {
     @CacheEvict(value = "members", key = "#id")
     public void deleteMember(UUID id) {
         logger.info("Deleting member with ID: {}", id);
-        MemberResponseDto member = getMemberById(id); // will throw UserNotFoundException if not found
+        MemberReqResDto member = getMemberById(id); // will throw UserNotFoundException if not found
         memberRepository.delete( memberMapper.toEntity(member));
         logger.info("Member deleted successfully: {}", id);
     }

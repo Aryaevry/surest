@@ -14,7 +14,7 @@ import java.util.UUID;
  * <p>
  * Fields include personal information, timestamp metadata, and optimistic locking data.
  */
-public record MemberResponseDto(
+public record MemberReqResDto(
 
         /**
          * Unique identifier of the member, represented as a UUID.
