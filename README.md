@@ -78,4 +78,10 @@ podman build -t surest-app:latest -f Dockerfile .
 podman play kube surest-pod.yaml
 
 
+Swagger Ui
+<img width="956" height="476" alt="image" src="https://github.com/user-attachments/assets/554aba80-7ddf-4f43-b8fa-94cf204c7153" />
+
+postman collection result
+
+
 
