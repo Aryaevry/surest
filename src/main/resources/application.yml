@@ -15,17 +15,24 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update   # create, update, validate, none
+      ddl-auto: none   # create, update, validate, none
     show-sql: true       # show SQL in console
     properties:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-  sql:
-    init:
-      mode: always
+
   flyway:
     enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true   # <-- important for existing DB
+    clean-disabled: false
+
+
+  sql:
+    init:
+      mode: never   # disable Spring SQL schema so Flyway works only
+
   data:
     redis:
       host: localhost

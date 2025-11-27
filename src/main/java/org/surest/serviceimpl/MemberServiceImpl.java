@@ -1,6 +1,7 @@
 package org.surest.serviceimpl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -30,6 +31,7 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
@@ -43,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public Page<MemberReqResDto> getMembers(int page, int size, String sort, String firstName, String lastName) {
-        logger.info("Fetching members: page={}, size={}, sort={}, firstName={}, lastName={}",
+        log.info("Fetching members: page={}, size={}, sort={}, firstName={}, lastName={}",
                 page, size, sort, firstName, lastName);
 
         Sort sortObj = Sort.by("id");
@@ -75,7 +77,7 @@ public class MemberServiceImpl implements MemberService {
             result = memberRepository.findAll(pageable);
         }
 
-        logger.info("Fetched {} members", result.getNumberOfElements());
+        log.info("Fetched {} members", result.getNumberOfElements());
         return memberMapper.toResponse(result);
     }
 
@@ -85,10 +87,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Cacheable(value = "members", key = "#id")
     public MemberReqResDto getMemberById(UUID id) {
-        logger.info("Fetching member by ID: {}", id);
+        log.info("Fetching member by ID: {}", id);
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Member not found with id: " + id));
-        logger.info("Member found: {}", member.getId());
+        log.info("Member found: {}", member.getId());
         return memberMapper.toResponse(member);
     }
 
@@ -98,7 +100,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberReqResDto createMember(Member member) {
         // Log the process of creating a new member
-        logger.info("Creating new member: {} {}", member.getFirstName(), member.getLastName());
+        log.info("Creating new member: {} {}", member.getFirstName(), member.getLastName());
 
         // Create a Specification to check if the email already exists
         Specification<Member> emailSpecification = (root, query, criteriaBuilder) ->
@@ -109,13 +111,13 @@ public class MemberServiceImpl implements MemberService {
 
         // If email exists, throw BusinessServiceException with a conflict status
         if (emailExists) {
-            logger.error("Email already exists: {}", member.getEmail());
+            log.error("Email already exists: {}", member.getEmail());
             throw new DuplicateDataException("Email already exists");
         }
 
         // If email is unique, save the new member
         Member createdMember = memberRepository.save(member);
-        logger.info("Member created successfully with ID: {}", createdMember.getId());
+        log.info("Member created successfully with ID: {}", createdMember.getId());
         return memberMapper.toResponse(createdMember);
     }
 
@@ -126,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @CachePut(value = "members", key = "#id")
     public MemberReqResDto updateMember(UUID id, Member memberDetails) {
-        logger.info("Updating member with ID: {}", id);
+        log.info("Updating member with ID: {}", id);
         Member member = memberMapper.toEntity(getMemberById(id)); // will throw UserNotFoundException if not found
         member.setFirstName(memberDetails.getFirstName());
         member.setLastName(memberDetails.getLastName());
@@ -134,7 +136,7 @@ public class MemberServiceImpl implements MemberService {
         member.setEmail(memberDetails.getEmail());
         member.setUpdatedAt(java.time.LocalDateTime.now());
         Member updated = memberRepository.save(member);
-        logger.info("Member updated successfully: {}", updated.getId());
+        log.info("Member updated successfully: {}", updated.getId());
         return memberMapper.toResponse(member);
     }
 
@@ -144,9 +146,9 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @CacheEvict(value = "members", key = "#id")
     public void deleteMember(UUID id) {
-        logger.info("Deleting member with ID: {}", id);
+        log.info("Deleting member with ID: {}", id);
         MemberReqResDto member = getMemberById(id); // will throw UserNotFoundException if not found
         memberRepository.delete( memberMapper.toEntity(member));
-        logger.info("Member deleted successfully: {}", id);
+        log.info("Member deleted successfully: {}", id);
     }
 }

@@ -21,7 +21,7 @@ public interface MemberMapper {
 
     List<MemberReqResDto> toResponse(List<Member> members);
 
-    // ⭐ Add Page conversion inside the same mapper
+    // Add Page conversion inside the same mapper
     default Page<MemberReqResDto> toResponse(Page<Member> memberPage) {
         List<MemberReqResDto> dtoList = toResponse(memberPage.getContent());
         return new PageImpl<>(
