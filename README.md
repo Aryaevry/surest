@@ -69,4 +69,13 @@ Generate JaCoCo report:
 
  ./gradlew bootRun
 
+Run the application using podman
+
+./gradlew build  
+
+podman build -t surest-app:latest -f Dockerfile .
+
+podman play kube surest-pod.yaml
+
+
 
