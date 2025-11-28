@@ -2,8 +2,6 @@ package org.surest.serviceimpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,7 +32,6 @@ import java.util.UUID;
 @Slf4j
 public class MemberServiceImpl implements MemberService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
 
     private final MemberRepository memberRepository;
 

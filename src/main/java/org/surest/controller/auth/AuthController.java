@@ -1,8 +1,7 @@
 package org.surest.controller.auth;
 
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,9 +29,9 @@ import org.surest.security.util.JwtUtil;
 @RestController
 @RequestMapping("/auth")
 @Validated
+@Slf4j
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -72,7 +71,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
         try {
-            logger.info("Login attempt for user: {}", authRequest.getUsername());
+            log.info("Login attempt for user: {}", authRequest.getUsername());
 
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
@@ -83,11 +82,11 @@ public class AuthController {
             // Generate JWT token with username and role
             String token = jwtUtil.generateToken(user.getUsername(), user.getRole().getName());
 
-            logger.info("Login successful for user: {}", authRequest.getUsername());
+            log.info("Login successful for user: {}", authRequest.getUsername());
 
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (BadCredentialsException e) {
-            logger.warn("Login failed for user: {} - invalid credentials", authRequest.getUsername());
+            log.warn("Login failed for user: {} - invalid credentials", authRequest.getUsername());
             return ResponseEntity.status(401).build();
         }
     }

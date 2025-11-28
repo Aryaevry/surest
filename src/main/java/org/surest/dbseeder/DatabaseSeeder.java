@@ -1,7 +1,6 @@
 package org.surest.dbseeder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +14,8 @@ import org.springframework.context.annotation.Configuration;
  * and default users exist in the database when the application starts.
  */
 @Configuration
+@Slf4j
 public class DatabaseSeeder {
-
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 
     private final SeedService seedService;
 
@@ -42,13 +40,13 @@ public class DatabaseSeeder {
     @Bean
     public CommandLineRunner seedDatabase() {
         return args -> {
-            logger.info("Starting database seeding...");
+            log.info("Starting database seeding...");
 
             try {
                 seedService.seed();
-                logger.info("Database seeding completed successfully.");
+                log.info("Database seeding completed successfully.");
             } catch (Exception e) {
-                logger.error("Error occurred during database seeding", e);
+                log.error("Error occurred during database seeding", e);
             }
         };
     }

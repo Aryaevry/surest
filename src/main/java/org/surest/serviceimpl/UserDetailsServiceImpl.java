@@ -1,12 +1,13 @@
 package org.surest.serviceimpl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 import org.surest.entity.User;
 import org.surest.repository.UserRepository;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -19,9 +20,9 @@ import java.util.List;
  * SLF4J logging is used to track user lookup attempts and outcomes.
  */
 @Service
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     private final UserRepository userRepository;
 
@@ -46,16 +47,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("Attempting to load user by username: {}", username);
+        log.info("Attempting to load user by username: {}", username);
 
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            logger.warn("User not found with username: {}", username);
+            log.warn("User not found with username: {}", username);
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
 
-        logger.info("User found: {}", username);
+        log.info("User found: {}", username);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

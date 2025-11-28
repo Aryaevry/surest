@@ -1,7 +1,6 @@
 package org.surest.dbseeder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.surest.entity.Role;
@@ -19,9 +18,9 @@ import org.surest.repository.UserRepository;
  * users. SLF4J logging is used to track seeding operations.
  */
 @Service
+@Slf4j
 public class SeedService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SeedService.class);
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -66,7 +65,7 @@ public class SeedService {
                     .name(ADMIN)
                     .build();
             roleRepository.save(adminRole);
-            logger.info("Seeded ROLE: {}", ADMIN);
+            log.info("Seeded ROLE: {}", ADMIN);
         }
 
         if (roleRepository.findByName(USER) == null) {
@@ -74,7 +73,7 @@ public class SeedService {
                     .name(USER)
                     .build();
             roleRepository.save(userRole);
-            logger.info("Seeded ROLE: {}", USER);
+            log.info("Seeded ROLE: {}", USER);
         }
     }
 
@@ -86,7 +85,7 @@ public class SeedService {
      */
     private void seedUsers() {
         if (userRepository.count() > 0) {
-            logger.info("Users already exist. Skipping user seeding.");
+            log.info("Users already exist. Skipping user seeding.");
             return;
         }
 
@@ -106,9 +105,9 @@ public class SeedService {
                 .build();
 
         userRepository.save(admin);
-        logger.info("Seeded USER: admin");
+        log.info("Seeded USER: admin");
 
         userRepository.save(user);
-        logger.info("Seeded USER: user");
+        log.info("Seeded USER: user");
     }
 }
