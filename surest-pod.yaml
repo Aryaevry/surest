@@ -1,0 +1,62 @@
+apiVersion: v1                 # Kubernetes API version used for this resource
+kind: Pod                      # Resource type is a Pod (group of containers sharing network/storage)
+metadata:
+  name: surest-pod             # Name of the pod
+
+spec:
+  restartPolicy: Always        # Restart the pod automatically if any container fails
+
+  volumes:                     # Define persistent storage volumes for containers
+    - name: dbdata             # Volume for Postgres data
+      hostPath:
+        path: /var/lib/postgresql/data   # Host machine path to store Postgres data
+        type: DirectoryOrCreate          # Create directory if it does not exist
+    - name: redisdata           # Volume for Redis data
+      hostPath:
+        path: /var/lib/redis/data       # Host machine path to store Redis data
+        type: DirectoryOrCreate          # Create directory if it does not exist
+
+  containers:                  # List of containers in this pod
+
+    - name: postgres           # Postgres container
+      image: docker.io/library/postgres:16   # Docker image for Postgres version 16
+      env:                     # Environment variables for Postgres configuration
+        - name: POSTGRES_USER
+          value: "postgres"    # Database username
+        - name: POSTGRES_PASSWORD
+          value: "arya123"     # Database password
+        - name: POSTGRES_DB
+          value: "surest"      # Database name
+      ports:
+        - containerPort: 5432   # Container's Postgres port
+          hostPort: 5432        # Expose same port on host machine
+      volumeMounts:
+        - name: dbdata          # Mount the dbdata volume
+          mountPath: /var/lib/postgresql/data   # Path inside container
+
+    - name: redis              # Redis container
+      image: docker.io/library/redis:7.2       # Docker image for Redis version 7.2
+      ports:
+        - containerPort: 6379  # Redis container port
+          hostPort: 6379       # Expose Redis port to host
+      volumeMounts:
+        - name: redisdata      # Mount the redisdata volume
+          mountPath: /data     # Path inside container for persistent data
+      command: ["redis-server", "--appendonly", "yes"]  # Enable Redis persistence (AOF)
+
+    - name: springapp          # Spring Boot application container
+      image: surest-app:latest         # Docker image for your Spring Boot app
+      env:                     # Environment variables for app configuration
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgres:5432/surest"   # JDBC URL to connect to Postgres container
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"    # Database username
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "arya123"     # Database password
+        - name: SPRING_REDIS_HOST
+          value: "redis"       # Redis host (container name in same pod)
+        - name: SPRING_REDIS_PORT
+          value: "6379"        # Redis port
+      ports:
+        - containerPort: 8080   # Port exposed by Spring Boot app inside container
+          hostPort: 8080        # Port exposed to host machine

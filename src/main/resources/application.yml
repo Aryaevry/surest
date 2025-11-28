@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/surest
+    username: postgres
+    password: arya123
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      maximum-pool-size: 20        # Max DB connections
+      minimum-idle: 5              # Minimum idle connections
+      idle-timeout: 30000          # 30 sec
+      max-lifetime: 1800000        # 30 min (recommended < PostgreSQL idle timeout)
+      connection-timeout: 30000    # 30 sec timeout for getting a connection
+      pool-name: SurestPool
+
+  jpa:
+    hibernate:
+      ddl-auto: none   # create, update, validate, none
+    show-sql: true       # show SQL in console
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true   # <-- important for existing DB
+    clean-disabled: false
+
+
+  sql:
+    init:
+      mode: never   # disable Spring SQL schema so Flyway works only
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: mypassword
+      database: 0
+
+
+
+

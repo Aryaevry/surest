@@ -1,0 +1,1112 @@
+{
+	"info": {
+		"_postman_id": "79c3ceb4-39c4-420e-bd48-c3d61e03872c",
+		"name": "MemberController API",
+		"description": "Postman collection for MemberController with example responses and tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50157010",
+		"_collection_link": "https://arpith-arya-8086584.postman.co/workspace/Arya's-Workspace~5c3e6362-4aa0-4032-803f-3fd897d5afdb/collection/50157010-79c3ceb4-39c4-420e-bd48-c3d61e03872c?action=share&source=collection_link&creator=50157010"
+	},
+	"item": [
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "Get Members",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response has content array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.content).to.be.an('array');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"admin\";\r",
+									"const password = \"admin123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members?page=0&size=10&sort=&firstName=&lastName=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": ""
+								},
+								{
+									"key": "firstName",
+									"value": ""
+								},
+								{
+									"key": "lastName",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Member By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response contains id\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"admin\";\r",
+									"const password = \"admin123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members",
+								"{{id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"email\": \"john.doe@example.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Response contains id\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"admin123\";\r",
+									"const password = \"admin123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"arya\",\n  \"lastName\": \"1\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"email\": \"arya.1@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"email\": \"john.doe@example.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Updated firstName is Jane\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.firstName).to.eql('Jane');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"admin\";\r",
+									"const password = \"admin123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"arya\",\n  \"lastName\": \"2\",\n  \"dateOfBirth\": \"1991-02-02\",\n  \"email\": \"arya.2@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members",
+								"{{id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\n  \"id\": \"{{id}}\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1991-02-02\",\n  \"email\": \"jane.doe@example.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"admin123\";\r",
+									"const password = \"admin123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members",
+								"{{id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "Get Members",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response has content array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.content).to.be.an('array');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"user\";\r",
+									"const password = \"user123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members?page=0&size=10&sort=&firstName=&lastName=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": ""
+								},
+								{
+									"key": "firstName",
+									"value": ""
+								},
+								{
+									"key": "lastName",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Member By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response contains id\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"user\";\r",
+									"const password = \"user123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members",
+								"{{id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"email\": \"john.doe@example.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Response contains id\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"user\";\r",
+									"const password = \"user123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"arya\",\n  \"lastName\": \"1\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"email\": \"arya.1@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"email\": \"john.doe@example.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Updated firstName is Jane\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.firstName).to.eql('Jane');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"user\";\r",
+									"const password = \"user123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"arya\",\n  \"lastName\": \"2\",\n  \"dateOfBirth\": \"1991-02-02\",\n  \"email\": \"arya.2@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members",
+								"{{id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\n  \"id\": \"{{id}}\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1991-02-02\",\n  \"email\": \"jane.doe@example.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Only fetch a new token if accessToken is empty or expired\r",
+									"const username = \"user\";\r",
+									"const password = \"user123\";\r",
+									"const baseUrl = \"localhost:8080\";\r",
+									"\r",
+									"// Optionally, you can add token expiry check here if your API provides expiry time\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: `${baseUrl}/auth/login`,\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            username: username,\r",
+									"            password: password\r",
+									"        })\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"    if (err) {\r",
+									"        console.log(\"Error fetching token:\", err);\r",
+									"    } else {\r",
+									"        const jsonResponse = res.json();\r",
+									"        // Save the token in environment variable named 'token'\r",
+									"        pm.environment.set(\"token\", jsonResponse.token);\r",
+									"        console.log(\"Token fetched and saved as {{token}}:\", jsonResponse.access_token);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/members/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"members",
+								"{{id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Example Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "id",
+			"value": ""
+		}
+	]
+}

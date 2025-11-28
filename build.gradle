@@ -1,0 +1,142 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'org.springframework.boot' version '3.5.7'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'org.surest'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.postgresql:postgresql:42.7.8'// replace with your DB
+
+
+// MapStruct core library for compile-time code generation of mappers
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+
+// MapStruct annotation processor that generates the mapper implementations during compilation
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    // Lombok-MapStruct binding to ensure Lombok-generated methods (getters/setters/builders)
+// are correctly recognized by MapStruct during annotation processing
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'com.auth0:java-jwt:4.4.0'
+
+
+    // Flyway core + PostgreSQL database support
+    implementation 'org.flywaydb:flyway-core:11.17.0'
+    implementation 'org.flywaydb:flyway-database-postgresql:11.17.0'
+
+    //validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
+
+    // Redis support
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Optional: explicit Mockito versions
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+
+    // Spring Security Test for @WithMockUser
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // --- Tests ---
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Testcontainers
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+
+}
+
+//// Flyway configuration (optional, can also be in application.properties)
+//flyway {
+//    url = 'jdbc:postgresql://localhost:5432/surest'
+//    user = 'postgres'
+//    password = 'arya123'
+//    locations = ['filesystem:src/main/resources/db/migration']
+//    schemas = ['surest']
+//    cleanDisabled = false // allow clean
+//    baselineOnMigrate = true
+//}
+
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "failed", "skipped"
+    }
+
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+def excludedClasses = [
+        'org/surest/config/**',
+        'org/surest/dto/**',
+        'org/surest/security/**',
+        'org/surest/entity/**',
+        'org/surest/util/**',
+        'org/surest/mappers/**'
+]
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+
+    classDirectories.setFrom(
+            fileTree("$buildDir/classes/java/main") {
+                exclude excludedClasses
+            }
+    )
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.50
+            }
+        }
+    }
+
+    classDirectories.setFrom(
+            fileTree("$buildDir/classes/java/main") {
+                exclude excludedClasses
+            }
+    )
+}
+
+
